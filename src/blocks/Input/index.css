@@ -1,0 +1,28 @@
+.input-container {
+    position: relative;
+    padding-bottom: 20px;
+    margin-bottom: 10px;
+
+}
+
+.input__label {
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.input {
+    height: 30px;
+    border-radius: 5px;
+    padding: 0 10px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e1e1e1;
+}
+
+.input__error {
+    color: red;
+    font-size: 14px;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}

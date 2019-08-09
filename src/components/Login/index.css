@@ -6,35 +6,6 @@
     padding: 40px 20px;
 }
 
-.input-container {
-    position: relative;
-    padding-bottom: 20px;
-    margin-bottom: 10px;
-
-}
-
-.login-form__label {
-    display: inline-block;
-    margin-bottom: 5px;
-}
-
-.login-form__input {
-    height: 30px;
-    border-radius: 5px;
-    padding: 0 10px;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #e1e1e1;
-}
-
-.login-form__error {
-    color: red;
-    font-size: 14px;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-}
-
 .login-form__submit {
     display: inline-block;
     background: #1b8c3b;

@@ -1,46 +1,9 @@
 import React, { Component } from "react";
-import Modal from "react-modal";
-import axios from "axios";
+import moment from "moment";
 import "./index.css";
 import * as Api from "../../helpers/Api";
-import moment from "moment";
-import { ClipLoader } from "react-spinners";
-import Select from "react-select";
-import { Title } from "../../blocks/TableTitle";
-import { InfoRow } from "../../blocks/InfoRow";
-
-const options = [
-  { value: 12, label: "12 hours" },
-  { value: 24, label: "24 hours" },
-  { value: 36, label: "36 Hours" }
-];
-
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    width: "800px",
-    height: "400px",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)",
-    position: "relative"
-  }
-};
-
-const airports = [
-  { name: "Atlanta", code: "KATL" },
-  { name: "Amsterdam", code: "EHAM" },
-  { name: "Dubai", code: "OMDB" },
-  { name: "Frankfurt", code: "EDDF" },
-  { name: "Los Angeles", code: "KLAX" },
-  { name: "Chicago", code: "KORD" },
-  { name: "London", code: "EGLL" },
-  { name: "Madrid", code: "LEMD" },
-  { name: "Barcelona", code: "LEBL" },
-  { name: "Paris", code: "LFPG" }
-];
-
-const SECONDS_IN_HOUR = 3600;
+import * as CONSTANTS from "../../constants";
+import { ModalContainer as Modal } from "./Modal";
 
 class Dashboard extends Component {
   state = {
@@ -75,8 +38,16 @@ class Dashboard extends Component {
       .unix();
     try {
       const [arrivals, departures] = await Promise.all([
-        Api.fetchArrivals(code, end - arrivalsEnd * SECONDS_IN_HOUR, end),
-        Api.fetchDepartures(code, end - departuresEnd * SECONDS_IN_HOUR, end)
+        Api.fetchArrivals(
+          code,
+          end - arrivalsEnd * CONSTANTS.SECONDS_IN_HOUR,
+          end
+        ),
+        Api.fetchDepartures(
+          code,
+          end - departuresEnd * CONSTANTS.SECONDS_IN_HOUR,
+          end
+        )
       ]);
       this.setState({ departures, arrivals, isFetching: false });
     } catch (err) {
@@ -93,14 +64,14 @@ class Dashboard extends Component {
       if (type === "arrivalsEnd") {
         const arrivals = await Api.fetchArrivals(
           selectedCity,
-          end - endTime * SECONDS_IN_HOUR,
+          end - endTime * CONSTANTS.SECONDS_IN_HOUR,
           end
         );
         this.setState({ isFetching: false, arrivals });
       } else if (type === "departuresEnd") {
         const departures = await Api.fetchDepartures(
           selectedCity,
-          end - endTime * SECONDS_IN_HOUR,
+          end - endTime * CONSTANTS.SECONDS_IN_HOUR,
           end
         );
         this.setState({ isFetching: false, departures });
@@ -115,81 +86,16 @@ class Dashboard extends Component {
     this.onUpdateInfo(type, value.value);
   };
 
-  renderModal() {
+  render() {
     const {
+      arrivals,
+      departures,
       isModalOpen,
       isFetching,
-      departures,
-      arrivals,
       arrivalsEnd,
       departuresEnd
     } = this.state;
-
-    const arrivalsRows = arrivals.map((arvl, index) => (
-      <li key={index}>
-        <InfoRow
-          icao={arvl.icao24}
-          departureTime={arvl.firstSeen}
-          arrivalTime={arvl.lastSeen}
-        />
-      </li>
-    ));
-    const departuresRows = departures.map((dptr, index) => (
-      <li key={index}>
-        <InfoRow
-          icao={dptr.icao24}
-          departureTime={dptr.firstSeen}
-          arrivalTime={dptr.lastSeen}
-        />
-      </li>
-    ));
-
-    return (
-      <Modal isOpen={isModalOpen} style={customStyles}>
-        <div className="close-modal" onClick={this.onCloseModal}>
-          &#10006;
-        </div>
-        {isFetching && (
-          <div className="loader-container">
-            <ClipLoader sizeUnit={"px"} size={20} color={"#123abc"} loading />
-          </div>
-        )}
-        <div className="info-container">
-          <div className="info-column">
-            <div>
-              <span>Arrivaasdls: </span>
-              <Select
-                value={options.find(opt => opt.value === arrivalsEnd)}
-                options={options}
-                onChange={value => this.onSelectChange(value, "arrivalsEnd")}
-              />
-            </div>
-            <Title />
-            <div className="info-list-container">
-              <ul className="info-list">{arrivalsRows}</ul>
-            </div>
-          </div>
-          <div className="info-column">
-            <div>
-              <span>Departures: </span>
-              <Select
-                value={options.find(opt => opt.value === departuresEnd)}
-                options={options}
-                onChange={value => this.onSelectChange(value, "departuresEnd")}
-              />
-            </div>
-            <Title />
-            <div className="info-list-container">
-              <ul className="info-list">{departuresRows}</ul>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    );
-  }
-
-  render() {
-    const airportsList = airports.map(arp => (
+    const airportsList = CONSTANTS.airports.map(arp => (
       <li key={arp.code} onClick={() => this.onCityClick(arp.code)}>
         {arp.name}
       </li>
@@ -199,7 +105,16 @@ class Dashboard extends Component {
         <div>
           <ul className="cities-list">{airportsList}</ul>
         </div>
-        {this.renderModal()}
+        <Modal
+          arrivals={arrivals}
+          departures={departures}
+          isModalOpen={isModalOpen}
+          isFetching={isFetching}
+          departuresEnd={departuresEnd}
+          arrivalsEnd={arrivalsEnd}
+          onSelectChange={this.onSelectChange}
+          onCloseModal={this.onCloseModal}
+        />
       </div>
     );
   }

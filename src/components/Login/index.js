@@ -1,8 +1,8 @@
 import React, { Component } from "react";
+import { isEmpty } from "lodash";
 import "./index.css";
-import { isEmpty } from 'lodash'
-import { Input } from '../../blocks/Input'
- 
+import { Input } from "../../blocks/Input";
+
 class Login extends Component {
   state = {
     values: {
@@ -60,7 +60,7 @@ class Login extends Component {
     this.setState({ touched: { ...touched, [e.target.name]: true } });
   };
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
     const { values } = this.state;
     const { navigation, onLogin } = this.props;
@@ -72,11 +72,10 @@ class Login extends Component {
       errors = { ...errors, ...validationResult.errors };
     }
     if (isEmpty(errors)) {
-      if (values.login === 'demo' && values.password === 'demo') {
-        localStorage.setItem('logedIn', true)
-        onLogin()
+      if (values.login === "demo" && values.password === "demo") {
+        onLogin();
       } else {
-        alert('Incorect login or password')
+        alert("Incorrect login or password");
       }
     } else {
       this.setState({
@@ -91,9 +90,9 @@ class Login extends Component {
     return (
       <div className="container form-container">
         <form className="login-form" onSubmit={this.onSubmit}>
-          <Input 
-            label='Login'
-            name='login'
+          <Input
+            label="Login"
+            name="login"
             error={touched.login && errors.login}
             value={values.login}
             onBlur={this.onBlur}
@@ -101,28 +100,13 @@ class Login extends Component {
           />
           <Input
             type="password"
-            label='Password'
-            name='password'
+            label="Password"
+            name="password"
             error={touched.password && errors.password}
             value={values.password}
             onBlur={this.onBlur}
             onChange={this.onChange}
           />
-          {/* <div className="input-container">
-            <label htmlFor="password" className="login-form__label">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              className="login-form__input"
-              value={values.password}
-              onBlur={this.onBlur}
-              onChange={this.onChange}
-            />
-            <span className="login-form__error" />
-          </div> */}
           <button type="submit" className="login-form__submit">
             Submit
           </button>
