@@ -63,7 +63,7 @@ class Login extends Component {
   onSubmit = e => {
     e.preventDefault();
     const { values } = this.state;
-    const { navigation, onLogin } = this.props;
+    const { onLogin } = this.props;
     let touched = {};
     let errors = {};
     for (let key in values) {
